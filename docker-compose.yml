@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  specfloweventual.api:
+    image: specfloweventual-api:dev
+    container_name: specfloweventual.api
+    ports:
+      - 80:5000
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_FILE: src/SpecflowEventualConsistency.WebApi/SpecflowEventualConsistency.WebApi.csproj
+        PROJECT_DLL: SpecflowEventualConsistency.WebApi.dll
+    environment:
+      ASPNETCORE_URLS: http://+:5000
+      DatabaseSettings:Username: $DB_USER
+      DatabaseSettings:Password: $DB_PASS
+      DatabaseSettings:Host: specfloweventual.db
+      DatabaseSettings:Database: $DB_NAME
+    depends_on:
+      - specfloweventual.db
+    restart: always
+    
+  specfloweventual.worker:
+    image: specfloweventual-worker:dev
+    container_name: specfloweventual.worker
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PROJECT_FILE: src/SpecflowEventualConsistency.Worker/SpecflowEventualConsistency.Worker.csproj
+        PROJECT_DLL: SpecflowEventualConsistency.Worker.dll
+    environment:
+      DatabaseSettings:Username: $DB_USER
+      DatabaseSettings:Password: $DB_PASS
+      DatabaseSettings:Host: specfloweventual.db
+      DatabaseSettings:Database: $DB_NAME
+      RabbitMqSettings:Hostname: specfloweventual.queue
+    depends_on:
+      - specfloweventual.db
+      - specfloweventual.queue
+    restart: always
+    
+  specfloweventual.queue:
+    container_name: specfloweventual.queue
+    image: rabbitmq:3.8.1-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=root 
+      - RABBITMQ_DEFAULT_VHOST=specfloweventual
+    restart: always
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+
+  specfloweventual.db:
+    image: library/postgres:11
+    container_name: specfloweventual.db
+    environment:
+      TZ: Europe/Amsterdam
+      POSTGRES_USER: $DB_USER
+      POSTGRES_PASSWORD: $DB_PASS
+      POSTGRES_DB: $DB_NAME
+    ports:
+      - 5432:5432
+    volumes:
+      - specfloweventual_db_data:/var/lib/postgresql/data
+    restart: always
+    
+volumes:
+  specfloweventual_db_data:
+  rabbitmq:

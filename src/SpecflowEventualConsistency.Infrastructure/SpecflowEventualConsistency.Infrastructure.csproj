@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="EasyNetQ" Version="6.3.1" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SpecflowEventualConsistency.Domain\SpecflowEventualConsistency.Domain.csproj" />
+    </ItemGroup>
+
+</Project>
