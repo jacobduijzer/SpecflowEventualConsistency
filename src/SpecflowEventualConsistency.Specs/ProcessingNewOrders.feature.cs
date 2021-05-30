@@ -40,7 +40,8 @@ namespace SpecflowEventualConsistency.Specs
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "", "Processing New Orders", "  TODO", ProgrammingLanguage.CSharp, ((string[])(null)));
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "", "Processing New Orders", "  As a order entry clerk\n  I want to send orders to the ordering system\n  So the " +
+                    "system can process the orders for the order pickers", ProgrammingLanguage.CSharp, ((string[])(null)));
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -83,14 +84,12 @@ namespace SpecflowEventualConsistency.Specs
         [Xunit.SkippableFactAttribute(DisplayName="Unprocessed orders will be queued and processed")]
         [Xunit.TraitAttribute("FeatureTitle", "Processing New Orders")]
         [Xunit.TraitAttribute("Description", "Unprocessed orders will be queued and processed")]
-        [Xunit.TraitAttribute("Category", "mytag")]
         public virtual void UnprocessedOrdersWillBeQueuedAndProcessed()
         {
-            string[] tagsOfScenario = new string[] {
-                    "mytag"};
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Unprocessed orders will be queued and processed", null, tagsOfScenario, argumentsOfScenario, this._featureTags);
-#line 5
+#line 6
   this.ScenarioInitialize(scenarioInfo);
 #line hidden
             bool isScenarioIgnored = default(bool);
@@ -130,13 +129,13 @@ namespace SpecflowEventualConsistency.Specs
                             "1",
                             "4",
                             "50"});
-#line 6
+#line 7
     testRunner.Given("the user has these unprocessed orders", ((string)(null)), table1, "Given ");
 #line hidden
-#line 12
+#line 13
     testRunner.When("he sends this orders to the api", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 13
+#line 14
     testRunner.Then("the orders will be processed and added to the database", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }

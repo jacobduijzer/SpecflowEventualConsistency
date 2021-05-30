@@ -1,7 +1,8 @@
 Feature: Processing New Orders
-  TODO
+  As a order entry clerk
+  I want to send orders to the ordering system
+  So the system can process the orders for the order pickers
 
-  @mytag
   Scenario: Unprocessed orders will be queued and processed
     Given the user has these unprocessed orders
       | CustomerId | ProductID | Amount |
