@@ -12,6 +12,7 @@ ProjectSection(SolutionItems) = preProject
 	docker-compose.yml = docker-compose.yml
 	Dockerfile = Dockerfile
 	.env = .env
+	README.md = README.md
 EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpecflowEventualConsistency.Worker", "src\SpecflowEventualConsistency.Worker\SpecflowEventualConsistency.Worker.csproj", "{D65F9EE2-8FFB-4E88-98F5-72C2057F72BE}"
