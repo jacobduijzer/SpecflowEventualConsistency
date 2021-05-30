@@ -23,6 +23,7 @@ namespace SpecflowEventualConsistency.Infrastructure
             await _appDbContext.Set<TEntity>()
                 .AddAsync(entity)
                 .ConfigureAwait(false);
+            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task AddRange(IEnumerable<TEntity> entities)
@@ -30,6 +31,15 @@ namespace SpecflowEventualConsistency.Infrastructure
             await _appDbContext.Set<TEntity>()
                 .AddRangeAsync(entities)
                 .ConfigureAwait(false);
+
+            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public async Task Delete(Expression<Func<TEntity, bool>> expression)
+        {
+            var entities = _appDbContext.Set<TEntity>().Where(expression);
+            _appDbContext.Set<TEntity>().RemoveRange(entities);
+            await _appDbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>> expression)

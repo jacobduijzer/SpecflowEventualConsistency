@@ -1,4 +1,6 @@
 using System;
+using System.Reflection;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,8 +27,8 @@ namespace SpecflowEventualConsistency.Worker
                     services
                         .Configure<RabbitMqSettings>(configuration.GetSection(nameof(RabbitMqSettings)))
                         .AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("SpecflowEventual")))
-                        .AddScoped(typeof(IRepository<>), typeof(Repository<>))
-                        .AddScoped<ProcessOrderCommand>();
+                        .AddMediatR(cfg => cfg.AsScoped(), typeof(NewOrdersCommand).GetTypeInfo().Assembly)
+                        .AddScoped(typeof(IRepository<>), typeof(Repository<>));
                     
                     services.AddHostedService<Worker>();
                 });

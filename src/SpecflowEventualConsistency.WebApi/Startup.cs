@@ -1,3 +1,5 @@
+using System.Reflection;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,9 +25,9 @@ namespace SpecflowEventualConsistency.WebApi
             services
                 .Configure<RabbitMqSettings>(_configuration.GetSection(nameof(RabbitMqSettings)))
                 .AddDbContext<AppDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("SpecflowEventual")))
-                .AddScoped<EventPublisher>()
-                .AddScoped<AddNewOrdersCommand>()
+                .AddMediatR(cfg => cfg.AsScoped(), typeof(NewOrdersCommand).GetTypeInfo().Assembly)
                 .AddScoped(typeof(IRepository<>), typeof(Repository<>))
+                .AddScoped<EventPublisher>()
                 .AddControllers();
             
             services.AddSwaggerGen(c =>
@@ -37,10 +39,10 @@ namespace SpecflowEventualConsistency.WebApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "SpecflowEventualConsistency.WebApi v1"));
             }
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SpecflowEventualConsistency.WebApi v1"));
 
             // app.UseHttpsRedirection();
 

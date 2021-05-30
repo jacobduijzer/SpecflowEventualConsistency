@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -56,12 +57,20 @@ namespace SpecflowEventualConsistency.Worker
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += async (ch, ea) =>
             {
-                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
-                var newOrder = JsonConvert.DeserializeObject<NewOrderEvent>(content);
+                try
+                {
+                    var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+                    var newOrder = JsonConvert.DeserializeObject<NewOrderEvent>(content);
 
-                await HandleMessage(newOrder);
+                    await HandleMessage(newOrder);
 
-                _channel.BasicAck(ea.DeliveryTag, false);
+                    _channel.BasicAck(ea.DeliveryTag, false);
+                }
+                catch (Exception exception)
+                {
+                   _logger.LogError(exception.Message, exception); 
+                }
+                
             };
 
             _channel.BasicConsume(_rabbitMqSettings.Queue, false, consumer);
@@ -72,8 +81,8 @@ namespace SpecflowEventualConsistency.Worker
         private async Task HandleMessage(NewOrderEvent newOrderEvent)
         {
             using var scope = _serviceProvider.CreateScope();
-            var orderProcessor = scope.ServiceProvider.GetRequiredService<ProcessOrderCommand>();
-            await orderProcessor.Handle(newOrderEvent.Order).ConfigureAwait(false);
+            var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+            await mediator.Publish(new ProcessOrderCommand.Command(newOrderEvent.Order)).ConfigureAwait(false);
             _logger.LogInformation($"New Order Received: CustomerId: {newOrderEvent.Order.CustomerId}, ProductId: {newOrderEvent.Order.ProductId}, Amount: {newOrderEvent.Order.Amount}");
         }
     }

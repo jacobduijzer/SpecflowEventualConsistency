@@ -1,23 +1,34 @@
+using System.Threading;
 using System.Threading.Tasks;
+using MediatR;
 using SpecflowEventualConsistency.Domain;
 
 namespace SpecflowEventualConsistency.Application
 {
     public class ProcessOrderCommand
     {
-        private readonly IRepository<Order> _orderRepository;
-
-        public ProcessOrderCommand(IRepository<Order> orderRepository)
+        public class Command : INotification
         {
-            _orderRepository = orderRepository;
+            public readonly Order Order;
+
+            public Command(Order order) =>
+                Order = order;
         }
 
-        public async Task Handle(Order order) 
+        public class Handler : INotificationHandler<Command>
         {
-            // Fake some long process
-            await Task.Delay(5000).ConfigureAwait(false);
+            private readonly IRepository<Order> _orderRepository;
 
-            await _orderRepository.Add(order).ConfigureAwait(false);
+            public Handler(IRepository<Order> orderRepository) =>
+                _orderRepository = orderRepository;
+
+            public async Task Handle(Command notification, CancellationToken cancellationToken)
+            {
+                // Fake some long process
+                await Task.Delay(5000).ConfigureAwait(false);
+
+                await _orderRepository.Add(notification.Order).ConfigureAwait(false);
+            }
         }
     }
 }

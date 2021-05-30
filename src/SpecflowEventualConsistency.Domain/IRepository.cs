@@ -9,6 +9,7 @@ namespace SpecflowEventualConsistency.Domain
     {
         Task Add(TEntity entity);
         Task AddRange(IEnumerable<TEntity> entities);
+        Task Delete(Expression<Func<TEntity, bool>> expression);
         Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>> expression);
     }
 }
